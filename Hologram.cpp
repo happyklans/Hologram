@@ -288,7 +288,7 @@ int main()
 		else if (slope < 1)
 		{
 			
-			if (user_vector_info[vector_id][0] * sin(user_vector_info[vector_id][2])/gcd==1)
+			if (modf((1/slope), &double_temp) == 0.0)
 			{
 				//in plain terms, i < magnitude of the x portion of the vector
 				//see above explaintion of mathmatical background for this claim
@@ -307,10 +307,10 @@ int main()
 
 		for (int row = 0; row < 16; row++)
 		{
-			for (int col = 0; col++)
+			/*for (int col = 0; col++)
 			{
 
-			}
+			}*/
 		}
 	}
 	/*for (int n = 0; n < zdimension; n++)
