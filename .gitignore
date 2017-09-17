@@ -45,3 +45,8 @@ $RECYCLE.BIN/
 Network Trash Folder
 Temporary Items
 .apdisk
+*.sln
+*.suo
+.vs/Hologram/v15/Browse.VC.db
+*.log
+Debug/hologram.nativecodeanalysis.xml

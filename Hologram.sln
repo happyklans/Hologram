@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26730.12
+VisualStudioVersion = 15.0.26730.8
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Hologram", "Hologram\Hologram.vcxproj", "{9E4A20E6-A777-48E5-9312-2164AD6678A8}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Hologram", "Hologram.vcxproj", "{9E4A20E6-A777-48E5-9312-2164AD6678A8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -26,6 +26,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {27445F8F-A02D-491F-B225-68E73B2093E4}
+		SolutionGuid = {E37FB93A-3572-4992-B145-C8460519F59E}
 	EndGlobalSection
 EndGlobal

@@ -1,3 +1,14 @@
 ﻿  Hologram.cpp
-  Hologram.vcxproj -> C:\Users\Ben\source\repos\Hologram\Debug\Hologram.exe
-  Hologram.vcxproj -> C:\Users\Ben\source\repos\Hologram\Debug\Hologram.pdb (Partial PDB)
+c:\users\thor\source\repos\c++\hologram\hologram.cpp(221): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+c:\users\thor\source\repos\c++\hologram\hologram.cpp(224): warning C4018: '<': signed/unsigned mismatch
+c:\users\thor\source\repos\c++\hologram\hologram.cpp(228): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+c:\users\thor\source\repos\c++\hologram\hologram.cpp(232): warning C4018: '<': signed/unsigned mismatch
+c:\users\thor\source\repos\c++\hologram\hologram.cpp(251): warning C4018: '<': signed/unsigned mismatch
+c:\users\thor\source\repos\c++\hologram\hologram.cpp(253): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+c:\users\thor\source\repos\c++\hologram\hologram.cpp(254): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+c:\users\thor\source\repos\c++\hologram\hologram.cpp(273): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+c:\users\thor\source\repos\c++\hologram\hologram.cpp(277): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+c:\users\thor\source\repos\c++\hologram\hologram.cpp(297): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+c:\users\thor\source\repos\c++\hologram\hologram.cpp(301): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+  Hologram.vcxproj -> C:\Users\Thor\source\repos\C++\Hologram\Debug\Hologram.exe
+  Hologram.vcxproj -> C:\Users\Thor\source\repos\C++\Hologram\Debug\Hologram.pdb (Partial PDB)
