@@ -13,7 +13,7 @@ using namespace std;
 
 const int ON = 255; //defines the states of the hardware 
 const int OFF = 0; //			"
-const int ATTRIBUTES = 3; // number of attributes for every cell in the abstraction space (status, red, green, blue)
+const int ATTRIBUTES = 6; // number of attributes for every cell in the abstraction space (status, red, green, blue)
 const int MAX_SCALE = 7; //maximum length for any vector to be displayed
 const int DIMENSIONS = 3; // dimension space that the vectors occupy
 const int DIMENSION_VARIABLES = 120; // letter variables that describe spacial dimensions
@@ -76,7 +76,7 @@ int main()
 	
 					 
 	// create slices vector as a multidimensional array of user entered dimensions
-	cout << "Enter the dimensions of your abstract space (z -> Enter -> y -> Enter -> x -> Enter): ";
+	cout << "Enter the dimensions of your abstract space (z -> Enter -> x -> Enter -> y -> Enter): ";
 	cin >> zdimension;
 	cin.ignore(1);
 	cin >> ydimension;
@@ -203,21 +203,7 @@ int main()
 		
 		phi = asin(zprime / rho);
 
-		temp = user_vector_info[0][0]; // in this context, temp is the max value of all the rho values of the vectors
-		
-		//finding the max rho value
-		for (int i = 0; i < (user_vector_info.size() - 1); i++)
-		{
 
-			if (user_vector_info[i + 1][0] > temp)
-				temp = user_vector_info[i + 1][0];
-		}
-
-		//scale all values to proper relative size to fit the display device (max length of 7)
-		for (int i = 0; i < user_vector_info.size(); i++)
-		{
-			user_vector_info[i][0] = round((MAX_SCALE - ((temp - user_vector_info[i][0]) / user_vector_info[i][0])*MAX_SCALE));
-		}
 
 		//add attributes to the vector index
 		user_vector_info[i].push_back(rho);
@@ -228,6 +214,22 @@ int main()
 		user_vector_info[i].push_back(blue);
 	}
 	
+	//scaling vectors from the user vector list
+	temp = user_vector_info[0][0]; // in this context, temp is the max value of all the rho values of the vectors
+
+								   //finding the max rho value
+	for (int i = 0; i < (user_vector_info.size() - 1); i++)
+	{
+
+		if (user_vector_info[i + 1][0] > temp)
+			temp = user_vector_info[i + 1][0];
+	}
+
+	//scale all values to proper relative size to fit the display device (max length of 7)
+	for (int i = 0; i < user_vector_info.size(); i++)
+	{
+		user_vector_info[i][0] = round((MAX_SCALE - ((temp - user_vector_info[i][0]) / user_vector_info[i][0])*MAX_SCALE));
+	}
 
 	
 	
@@ -267,8 +269,9 @@ int main()
 			//for non-integer slopes greater than 1
 			else
 			{
-				for (int i, j = 0; i < round(user_vector_info[vector_id][0] * cos(user_vector_info[vector_id][2])); i++)
+				for (int i = 0, j = 0; i < round(user_vector_info[vector_id][0] * cos(user_vector_info[vector_id][2])); i++, j--)
 				{
+					
 					while (j < (slope*(i + 1)))
 					{
 						for (int k = 0; k < ATTRIBUTES; k++)
@@ -278,10 +281,7 @@ int main()
 
 						j++;
 					}
-
-					//increment x 
-					j -= 1;
-
+					
 				}
 			}
 		}
@@ -306,7 +306,7 @@ int main()
 			//for all non-integer slopes less than 1
 			else
 			{
-				for (int i, j = 0; i < user_vector_info[vector_id][0] * sin(user_vector_info[vector_id][2]); i++) //due to the way that rho and phi (the variables 
+				for (int i = 0, j = 0; i < (user_vector_info[vector_id][0] * sin(user_vector_info[vector_id][2])); i++, j--) //due to the way that rho and phi (the variables 
 				{																									//being used) are calculated, the product of this 
 					while (j < ((1 / slope)*(i + 1)))																		//operation will always yield an integer
 					{																								// removing the need to round it
@@ -315,7 +315,6 @@ int main()
 							slices[n_index][j][i][k] = user_vector_info[vector_id][3 + k];
 						}
 
-						j++;
 					}
 
 					//increment y 
