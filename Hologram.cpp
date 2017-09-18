@@ -104,22 +104,7 @@ int main()
 		}
 	}
 
-	//created slices
-	/*cout << endl << "starting point = (";
-
-	for (int i = 0; i < DIMENSIONS; i++)
-	{
-	cout << start[i] << ',';
-	}
-	cout << ')' << endl;
-
-	cout  << "ending point = (";
-
-	for (int i = 0; i < DIMENSIONS; i++)
-	{
-	cout << end[i] << ',';
-	}
-	cout << ')' << endl;*/
+	
 	//query user for total number of vectors they want to enter
 	cout << "Enter the number of vectors to be displayed: ";
 	cin >> num_vectors;
@@ -254,10 +239,10 @@ int main()
 		n_index = round(n_index);
 		n_index -= 1;
 		n_index = static_cast<int>(n_index);
-		
+
 		//slope of an abstract 2d vector that is identical to the 3d user inputted vector when the slice upon which the 
 		//user inputted vector sits is viewed head on
-		slope = user_vector_info[vector_id][0] * sin(user_vector_info[vector_id][2]) / user_vector_info[vector_id][0] * cos(user_vector_info[vector_id][2]);
+		slope = user_vector_info[vector_id][0] * sin(user_vector_info[vector_id][2]) / round(user_vector_info[vector_id][0] * cos(user_vector_info[vector_id][2]));
 		// in plain terms, slope = y/x, and in this case, y = rho*sin(phi), and x = rho*cos(phi)
 		//for 
 		if (slope >= 1)
@@ -269,8 +254,8 @@ int main()
 				//in plain terms, i < magnitude of the x portion of the vector
 				//see above explaintion of mathmatical background for this claim
 				for (int i = 0; i < round(user_vector_info[vector_id][0] * cos(user_vector_info[vector_id][2])); i++)
-				{ 
-					for (int j = (slope*i); j < round(user_vector_info[vector_id][0] * sin(user_vector_info[vector_id][2])); j++)
+				{
+					for (int j = (slope*i); j < round(slope*(i + 1)); j++)
 					{
 						for (int k = 0; k < ATTRIBUTES; k++)
 						{
@@ -279,22 +264,37 @@ int main()
 					}
 				}
 			}
-			//for non-integer slopes greter than 1
+			//for non-integer slopes greater than 1
 			else
 			{
+				for (int i, j = 0; i < round(user_vector_info[vector_id][0] * cos(user_vector_info[vector_id][2])); i++)
+				{
+					while (j < (slope*(i + 1)))
+					{
+						for (int k = 0; k < ATTRIBUTES; k++)
+						{
+							slices[n_index][i][j][k] = user_vector_info[vector_id][3 + k];
+						}
 
+						j++;
+					}
+
+					//increment x 
+					j -= 1;
+
+				}
 			}
 		}
 		else if (slope < 1)
 		{
 			//for slopes that can be expressed as 1/n where n is some integer greater than 1
-			if (modf((1/slope), &double_temp) == 0.0)
+			if (modf((1 / slope), &double_temp) == 0.0)
 			{
 				//in plain terms, i < magnitude of the x portion of the vector
 				//see above explaintion of mathmatical background for this claim
 				for (int i = 0; i < round(user_vector_info[vector_id][0] * sin(user_vector_info[vector_id][2])); i++)
 				{
-					for (int j = ((1/slope)*i); j < round(user_vector_info[vector_id][0] * cos(user_vector_info[vector_id][2])); j++)
+					for (int j = ((1 / slope)*i); j < round((1 / slope)*(i + 1)); j++)
 					{
 						for (int k = 0; k < ATTRIBUTES; k++)
 						{
@@ -303,38 +303,52 @@ int main()
 					}
 				}
 			}
-			//for all other slopes less than 1
+			//for all non-integer slopes less than 1
 			else
 			{
-			
-			}
-		}
+				for (int i, j = 0; i < user_vector_info[vector_id][0] * sin(user_vector_info[vector_id][2]); i++) //due to the way that rho and phi (the variables 
+				{																									//being used) are calculated, the product of this 
+					while (j < ((1 / slope)*(i + 1)))																		//operation will always yield an integer
+					{																								// removing the need to round it
+						for (int k = 0; k < ATTRIBUTES; k++)
+						{
+							slices[n_index][j][i][k] = user_vector_info[vector_id][3 + k];
+						}
 
-		for (int row = 0; row < 16; row++)
-		{
-			/*for (int col = 0; col++)
-			{
+						j++;
+					}
 
-			}*/
-		}
-	}
-	/*for (int n = 0; n < zdimension; n++)
-	{
-		for (int row = 0; row < ydimension; row++)
-		{
-			for (int col = 0; col < xdimension; col++)
-			{
-				for (int i = 0; i < ATTRIBUTES; i++)
-				{
-					cin.peek();
+					//increment y 
+					j -= 1;
 
-					cout << "hi";
-
-					slices[n][row][col].push_back(OFF);
 				}
 			}
 		}
-	}*/
+
+	}
+	//DELETE THIS IS JUST TO TEST NOT ACTUAL CODE GET OFF MY CASE
+	for (int n = 0; n < zdimension; n++)
+	{
+		slices.push_back(constructor_one);
+
+		for (int row = 0; row < xdimension; row++)
+		{
+			slices[n].push_back(constructor_two);
+
+			for (int col = 0; col < ydimension; col++)
+			{
+				slices[n][row].push_back(constructor_three);
+
+				for (int i = 0; i < ATTRIBUTES; i++)
+				{
+					cout << slices[0][row][col][0];
+				}
+			}
+		}
+
+		break;
+	}
+
 
 	return 0;
 }
