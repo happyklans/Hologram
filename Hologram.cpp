@@ -14,6 +14,7 @@ using namespace std;
 const int ON = 255; //defines the states of the hardware 
 const int OFF = 0; //			"
 const int ATTRIBUTES = 6; // number of attributes for every cell in the abstraction space (status, red, green, blue)
+const int COLOR_ATTRIBUTES = 3; //number of color attributes
 const int MAX_SCALE = 7; //maximum length for any vector to be displayed
 const int DIMENSIONS = 3; // dimension space that the vectors occupy
 const int DIMENSION_VARIABLES = 120; // letter variables that describe spacial dimensions
@@ -36,7 +37,9 @@ int main()
 
 	vector<vector<double>> user_vector_info; //attributes of the user entered vector(s)
 	
-	ofstream bitmap("bitmap.csv");
+	vector<double> beta_constructor_one; //used for constructing the user_vector_info vector
+
+	ofstream bitmap;
 	
 	double rho = 0;  //cylindrical coordinates for the user entered vector
 	
@@ -112,6 +115,9 @@ int main()
 	//populate user_entered_vectors vector
 	for (int i = 0; i < num_vectors; i++)
 	{
+		//construct a container for the user vector
+		user_vector_info.push_back(beta_constructor_one);
+
 		//populating start and end point vectors
 		for (int i = 0; i < DIMENSIONS; i++)
 		{
@@ -145,51 +151,43 @@ int main()
 		switch (color)
 		{
 		case 1:
-		{
 			red = ON;
-			blue, green = OFF;
+			blue = OFF, green = OFF;
 			break;
-		}
+		
 		case 2:
-		{
 			green = ON;
-			red, blue = OFF;
+			red = OFF, blue = OFF;
 			break;
-		}
+		
 		case 3:
-		{
 			blue = ON;
-			red, green = OFF;
+			red = OFF, green = OFF;
 			break;
-		}
+
 		case 4:
-		{
-			red, green = ON;
+			red = ON, green = ON;
 			blue = OFF;
 			break;
-		}
+		
 		case 5:
-		{
-			green, blue = ON;
+			green = ON, blue = ON;
 			red = OFF;
 			break;
-		}
+	
 		case 6:
-		{
-			red, blue = ON;
+			red = ON, blue = ON;
 			green = OFF;
 			break;
-		}
+		
 		case 7:
-		{
-			red, green, blue = ON;
+			red = ON, green = ON, blue = ON;
 			break;
-		}
+		
 		default:
-		{
-			red, green, blue = ON;
+			red = ON, green = ON, blue = ON;
 			break;
-		}	
+			
 		}
 		//defining the vector in rectangular coordinates
 		xprime = end[0] - start[0];
@@ -239,7 +237,6 @@ int main()
 	{
 		n_index = theta / SLICE_WIDTH;
 		n_index = round(n_index);
-		n_index -= 1;
 		n_index = static_cast<int>(n_index);
 
 		//slope of an abstract 2d vector that is identical to the 3d user inputted vector when the slice upon which the 
@@ -259,7 +256,7 @@ int main()
 				{
 					for (int j = (slope*i); j < round(slope*(i + 1)); j++)
 					{
-						for (int k = 0; k < ATTRIBUTES; k++)
+						for (int k = 0; k < COLOR_ATTRIBUTES; k++)
 						{
 							slices[n_index][i][j][k] = user_vector_info[vector_id][3 + k];
 						}
@@ -274,7 +271,7 @@ int main()
 					
 					while (j < (slope*(i + 1)))
 					{
-						for (int k = 0; k < ATTRIBUTES; k++)
+						for (int k = 0; k < COLOR_ATTRIBUTES; k++)
 						{
 							slices[n_index][i][j][k] = user_vector_info[vector_id][3 + k];
 						}
@@ -296,7 +293,7 @@ int main()
 				{
 					for (int j = ((1 / slope)*i); j < round((1 / slope)*(i + 1)); j++)
 					{
-						for (int k = 0; k < ATTRIBUTES; k++)
+						for (int k = 0; k < COLOR_ATTRIBUTES; k++)
 						{
 							slices[n_index][j][i][k] = user_vector_info[vector_id][3 + k];
 						}
@@ -310,7 +307,7 @@ int main()
 				{																									//being used) are calculated, the product of this 
 					while (j < ((1 / slope)*(i + 1)))																		//operation will always yield an integer
 					{																								// removing the need to round it
-						for (int k = 0; k < ATTRIBUTES; k++)
+						for (int k = 0; k < COLOR_ATTRIBUTES; k++)
 						{
 							slices[n_index][j][i][k] = user_vector_info[vector_id][3 + k];
 						}
@@ -326,28 +323,34 @@ int main()
 
 	}
 	//DELETE THIS IS JUST TO TEST NOT ACTUAL CODE GET OFF MY CASE
+
+	bitmap.open("bitmap.txt", ios::in);
+
 	for (int n = 0; n < zdimension; n++)
 	{
-		slices.push_back(constructor_one);
+		
 
 		for (int row = 0; row < xdimension; row++)
 		{
-			slices[n].push_back(constructor_two);
+			
 
 			for (int col = 0; col < ydimension; col++)
 			{
-				slices[n][row].push_back(constructor_three);
-
-				for (int i = 0; i < ATTRIBUTES; i++)
+				
+				for (int i = 0; i < 1; i++)
 				{
-					cout << slices[0][row][col][0];
+					bitmap << slices[n][row][col][0];
 				}
+
+				
 			}
+			bitmap << endl;
 		}
 
-		break;
+		bitmap << n << "th frame" << endl;
 	}
-
+	bitmap.close();
+	
 
 	return 0;
 }
