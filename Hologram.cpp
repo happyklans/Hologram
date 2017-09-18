@@ -279,7 +279,7 @@ int main()
 					}
 				}
 			}
-			//for fractional slopes > 1
+			//for non-integer slopes greter than 1
 			else
 			{
 
@@ -287,21 +287,26 @@ int main()
 		}
 		else if (slope < 1)
 		{
-			
+			//for slopes that can be expressed as 1/n where n is some integer greater than 1
 			if (modf((1/slope), &double_temp) == 0.0)
 			{
 				//in plain terms, i < magnitude of the x portion of the vector
 				//see above explaintion of mathmatical background for this claim
 				for (int i = 0; i < round(user_vector_info[vector_id][0] * sin(user_vector_info[vector_id][2])); i++)
 				{
-					for (int j = (slope*i); j < round(user_vector_info[vector_id][0] * cos(user_vector_info[vector_id][2])); j++)
+					for (int j = ((1/slope)*i); j < round(user_vector_info[vector_id][0] * cos(user_vector_info[vector_id][2])); j++)
 					{
 						for (int k = 0; k < ATTRIBUTES; k++)
 						{
-							slices[n_index][i][j][k] = user_vector_info[vector_id][3 + k];
+							slices[n_index][j][i][k] = user_vector_info[vector_id][3 + k];
 						}
 					}
 				}
+			}
+			//for all other slopes less than 1
+			else
+			{
+			
 			}
 		}
 
