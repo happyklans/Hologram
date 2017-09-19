@@ -82,9 +82,9 @@ int main()
 	cout << "Enter the dimensions of your abstract space (z -> Enter -> x -> Enter -> y -> Enter): ";
 	cin >> zdimension;
 	cin.ignore(1);
-	cin >> ydimension;
-	cin.ignore(1);
 	cin >> xdimension;
+	cin.ignore(1);
+	cin >> ydimension;
 
 	//construct the matrix itself
 	for (int n = 0; n < zdimension; n++)
@@ -107,6 +107,12 @@ int main()
 		}
 	}
 
+	for (int i = 0; i < DIMENSIONS; i++)
+	{
+		start.push_back(OFF);
+		end.push_back(OFF);
+	}
+
 	
 	//query user for total number of vectors they want to enter
 	cout << "Enter the number of vectors to be displayed: ";
@@ -123,7 +129,7 @@ int main()
 		{
 			cout << "Enter your starting " << static_cast<char>(DIMENSION_VARIABLES + i) << " point: ";
 			cin >> temp;
-			start.push_back(temp);
+			start[i] = temp;
 			cin.ignore(1);
 		}
 
@@ -131,7 +137,7 @@ int main()
 		{
 			cout << "Enter your ending " << static_cast<char>(DIMENSION_VARIABLES + i) << " point: ";
 			cin >> temp;
-			end.push_back(temp);
+			end[i] = temp;
 			cin.ignore(1);
 		}
 		//start and end point vectors populated
@@ -330,11 +336,11 @@ int main()
 	{
 		
 
-		for (int row = 0; row < xdimension; row++)
+		for (int col = 0; col < ydimension; col++)
 		{
 			
 
-			for (int col = 0; col < ydimension; col++)
+			for (int row = 0; row < xdimension; row++)
 			{
 				
 				for (int i = 0; i < 1; i++)
