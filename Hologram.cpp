@@ -15,7 +15,7 @@ const int ON = 255; //defines the states of the hardware
 const int OFF = 0; //			"
 const int ATTRIBUTES = 6; // number of attributes for every cell in the abstraction space (status, red, green, blue)
 const int COLOR_ATTRIBUTES = 3; //number of color attributes
-const int MAX_SCALE = 7; //maximum length for any vector to be displayed
+const int MAX_SCALE = 9; //maximum length for any vector to be displayed
 const int DIMENSIONS = 3; // dimension space that the vectors occupy
 const int DIMENSION_VARIABLES = 120; // letter variables that describe spacial dimensions
 const double SLICE_WIDTH = .1963495408; // the slice width in radians
@@ -194,12 +194,12 @@ int main()
 		yprime = end[1] - start[1];
 		zprime = end[2] - start[2];
 
-		//convert from rectangular to cylindrical coordinates
-		rho = sqrt((xprime*xprime) + (yprime*yprime));
+		//convert from rectangular to spherical coordinates
+		rho = sqrt((xprime*xprime) + (yprime*yprime) + (zprime*zprime));
+		
+		phi = acos(zprime / rho);
 		
 		theta = atan(yprime / xprime);
-		
-		phi = asin(zprime / rho);
 
 
 
@@ -213,20 +213,20 @@ int main()
 	}
 	
 	//scaling vectors from the user vector list
-	temp = user_vector_info[0][0]; // in this context, temp is the max value of all the rho values of the vectors
+	double_temp = user_vector_info[0][0]; // in this context, temp is the max value of all the rho values of the vectors
 
 								   //finding the max rho value
 	for (int i = 0; i < (user_vector_info.size() - 1); i++)
 	{
 
 		if (user_vector_info[i + 1][0] > temp)
-			temp = user_vector_info[i + 1][0];
+			double_temp = user_vector_info[i + 1][0];
 	}
 
 	//scale all values to proper relative size to fit the display device (max length of 7)
 	for (int i = 0; i < user_vector_info.size(); i++)
 	{
-		user_vector_info[i][0] = round((MAX_SCALE - ((temp - user_vector_info[i][0]) / user_vector_info[i][0])*MAX_SCALE));
+		user_vector_info[i][0] = round((MAX_SCALE - ((double_temp - user_vector_info[i][0]) / user_vector_info[i][0])*MAX_SCALE));
 	}
 
 	
@@ -241,7 +241,7 @@ int main()
 
 		//slope of an abstract 2d vector that is identical to the 3d user inputted vector when the slice upon which the 
 		//user inputted vector sits is viewed head on
-		slope = user_vector_info[vector_id][0] * sin(user_vector_info[vector_id][2]) / round(user_vector_info[vector_id][0] * cos(user_vector_info[vector_id][2]));
+		slope = round(user_vector_info[vector_id][0] * cos(user_vector_info[vector_id][2])) / round(user_vector_info[vector_id][0] * sin(user_vector_info[vector_id][2]));
 		// in plain terms, slope = y/x, and in this case, y = rho*sin(phi), and x = rho*cos(phi)
 		//for 
 		if (slope >= 1)
@@ -252,13 +252,13 @@ int main()
 			{
 				//in plain terms, i < magnitude of the x portion of the vector
 				//see above explaintion of mathmatical background for this claim
-				for (int i = 0; i < round(user_vector_info[vector_id][0] * cos(user_vector_info[vector_id][2])); i++)
+				for (int i = 0; i < round(user_vector_info[vector_id][0] * sin(user_vector_info[vector_id][2])); i++)
 				{
 					for (int j = (slope*i); j < round(slope*(i + 1)); j++)
 					{
 						for (int k = 0; k < COLOR_ATTRIBUTES; k++)
 						{
-							slices[n_index][i][j][k] = user_vector_info[vector_id][3 + k];
+							slices[n_index][i][j+6][k] = user_vector_info[vector_id][3 + k];
 						}
 					}
 				}
@@ -266,14 +266,14 @@ int main()
 			//for non-integer slopes greater than 1
 			else
 			{
-				for (int i = 0, j = 0; i < round(user_vector_info[vector_id][0] * cos(user_vector_info[vector_id][2])); i++, j--)
+				for (int i = 0, j = 0; i < round(user_vector_info[vector_id][0] * sin(user_vector_info[vector_id][2])); i++, j--)
 				{
 					
 					while (j < (slope*(i + 1)))
 					{
 						for (int k = 0; k < COLOR_ATTRIBUTES; k++)
 						{
-							slices[n_index][i][j][k] = user_vector_info[vector_id][3 + k];
+							slices[n_index][i][j+6][k] = user_vector_info[vector_id][3 + k];
 						}
 
 						j++;
@@ -289,13 +289,13 @@ int main()
 			{
 				//in plain terms, i < magnitude of the x portion of the vector
 				//see above explaintion of mathmatical background for this claim
-				for (int i = 0; i < round(user_vector_info[vector_id][0] * sin(user_vector_info[vector_id][2])); i++)
+				for (int i = 0; i < round(user_vector_info[vector_id][0] * cos(user_vector_info[vector_id][2])); i++)
 				{
 					for (int j = ((1 / slope)*i); j < round((1 / slope)*(i + 1)); j++)
 					{
 						for (int k = 0; k < COLOR_ATTRIBUTES; k++)
 						{
-							slices[n_index][j][i][k] = user_vector_info[vector_id][3 + k];
+							slices[n_index][j][i+6][k] = user_vector_info[vector_id][3 + k];
 						}
 					}
 				}
@@ -303,13 +303,13 @@ int main()
 			//for all non-integer slopes less than 1
 			else
 			{
-				for (int i = 0, j = 0; i < (user_vector_info[vector_id][0] * sin(user_vector_info[vector_id][2])); i++, j--) //due to the way that rho and phi (the variables 
+				for (int i = 0, j = 0; i < (user_vector_info[vector_id][0] * cos(user_vector_info[vector_id][2])); i++, j--) //due to the way that rho and phi (the variables 
 				{																									//being used) are calculated, the product of this 
 					while (j < ((1 / slope)*(i + 1)))																		//operation will always yield an integer
 					{																								// removing the need to round it
 						for (int k = 0; k < COLOR_ATTRIBUTES; k++)
 						{
-							slices[n_index][j][i][k] = user_vector_info[vector_id][3 + k];
+							slices[n_index][j][i+6][k] = user_vector_info[vector_id][3 + k];
 						}
 
 					}
@@ -339,7 +339,7 @@ int main()
 				
 				for (int i = 0; i < 1; i++)
 				{
-					bitmap << slices[n][row][col][0];
+					bitmap << slices[n][row][col][0] << "\t";
 				}
 
 				
@@ -347,7 +347,7 @@ int main()
 			bitmap << endl;
 		}
 
-		bitmap << n << "th frame" << endl;
+		bitmap << endl;
 	}
 	bitmap.close();
 	
