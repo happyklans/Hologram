@@ -37,22 +37,8 @@ int main()
 	vector<int> end; // endpoint of a vector
 
 	vector<vector<double>> user_vector_info; //attributes of the user entered vector(s)
-	
-	vector<double> beta_constructor_one; //used for constructing the user_vector_info vector
 
 	ofstream bitmap;
-	
-	double rho = 0;  //cylindrical coordinates for the user entered vector
-	
-	double theta = 0;	//				"
-	
-	double phi = 0; //once the vector has been assigned to a slice, this angle is used to transpose the 3d vector to a 2d space
-	
-	int red = 0; //12 bit color variable
-
-	int green = 0;//		"
-
-	int blue = 0; //		"
 	
 	double xprime = 0; //rectangular coordinates of the user entered vector
 	
@@ -156,12 +142,7 @@ int main()
 			"7) white   \n";
 		cin >> color;
 
-		//translating color preference to numerical values
-		red = red_value(color);
-
-		green = green_value(color);
-
-		blue = blue_value(color);
+		
 
 		//defining the vector in rectangular coordinates
 		xprime = end[0] - start[0];
@@ -170,27 +151,22 @@ int main()
 		
 		zprime = end[2] - start[2];
 
-		//convert from rectangular to spherical coordinates
-		rho = calc_rho(xprime, yprime, zprime);
-		
-		phi = calc_phi(zprime, rho);
-		
-		theta = calc_theta(yprime, xprime);
-
-
 
 		//add attributes to the vector index
-		user_vector_info[i].push_back(rho);
+		//spherical coordinates for the user entered vector
+		user_vector_info[i].push_back(calc_rho(xprime, yprime, zprime));
 		
-		user_vector_info[i].push_back(theta);
+		user_vector_info[i].push_back(calc_theta(yprime, xprime));
 		
-		user_vector_info[i].push_back(phi);
+		user_vector_info[i].push_back(calc_phi(zprime, calc_rho(xprime, yprime, zprime)));
+
+		//12 bit color variables
 		
-		user_vector_info[i].push_back(red);
+		user_vector_info[i].push_back(red_value(color));
 		
-		user_vector_info[i].push_back(green);
+		user_vector_info[i].push_back(green_value(color));
 		
-		user_vector_info[i].push_back(blue);
+		user_vector_info[i].push_back(blue_value(color));
 	}
 	
 	//scaling vectors from the user vector list
@@ -216,7 +192,7 @@ int main()
 	//draw the user entered vector on the appropriate slice
 	for (int vector_id = 0; vector_id < user_vector_info.size(); vector_id++)
 	{
-		n_index = theta / SLICE_WIDTH;
+		n_index = user_vector_info[vector_id][1] / SLICE_WIDTH;
 		n_index = round(n_index);
 		n_index = static_cast<int>(n_index);
 
