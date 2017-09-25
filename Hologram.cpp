@@ -9,6 +9,7 @@ take some input, convert from vector notation to cylindrical coordinates then ma
 #include <iostream>
 #include <fstream>
 #include <cmath>
+#include "User_Vector.h"
 using namespace std;
 
 const int ON = 255; //defines the states of the hardware 
@@ -121,8 +122,10 @@ int main()
 	//populate user_entered_vectors vector
 	for (int i = 0; i < num_vectors; i++)
 	{
+		
+		
 		//construct a container for the user vector
-		user_vector_info.push_back(beta_constructor_one);
+		new_vector(user_vector_info);
 
 		//populating start and end point vectors
 		for (int i = 0; i < DIMENSIONS; i++)
@@ -154,67 +157,39 @@ int main()
 		cin >> color;
 
 		//translating color preference to numerical values
-		switch (color)
-		{
-		case 1:
-			red = ON;
-			blue = OFF, green = OFF;
-			break;
-		
-		case 2:
-			green = ON;
-			red = OFF, blue = OFF;
-			break;
-		
-		case 3:
-			blue = ON;
-			red = OFF, green = OFF;
-			break;
+		red = red_value(color);
 
-		case 4:
-			red = ON, green = ON;
-			blue = OFF;
-			break;
-		
-		case 5:
-			green = ON, blue = ON;
-			red = OFF;
-			break;
-	
-		case 6:
-			red = ON, blue = ON;
-			green = OFF;
-			break;
-		
-		case 7:
-			red = ON, green = ON, blue = ON;
-			break;
-		
-		default:
-			red = ON, green = ON, blue = ON;
-			break;
-			
-		}
+		green = green_value(color);
+
+		blue = blue_value(color);
+
 		//defining the vector in rectangular coordinates
 		xprime = end[0] - start[0];
+		
 		yprime = end[1] - start[1];
+		
 		zprime = end[2] - start[2];
 
 		//convert from rectangular to spherical coordinates
-		rho = sqrt((xprime*xprime) + (yprime*yprime) + (zprime*zprime));
+		rho = calc_rho(xprime, yprime, zprime);
 		
-		phi = acos(zprime / rho);
+		phi = calc_phi(zprime, rho);
 		
-		theta = atan(yprime / xprime);
+		theta = calc_theta(yprime, xprime);
 
 
 
 		//add attributes to the vector index
 		user_vector_info[i].push_back(rho);
+		
 		user_vector_info[i].push_back(theta);
+		
 		user_vector_info[i].push_back(phi);
+		
 		user_vector_info[i].push_back(red);
+		
 		user_vector_info[i].push_back(green);
+		
 		user_vector_info[i].push_back(blue);
 	}
 	
@@ -318,10 +293,11 @@ int main()
 							slices[n_index][j][i+6][k] = user_vector_info[vector_id][3 + k];
 						}
 
+						j++;
 					}
 
 					//increment y 
-					j -= 1;
+					
 
 				}
 			}
