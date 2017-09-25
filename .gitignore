@@ -50,3 +50,5 @@ Temporary Items
 .vs/Hologram/v15/Browse.VC.db
 *.log
 Debug/hologram.nativecodeanalysis.xml
+.vs/Hologram/v15/.suo
+*.db
