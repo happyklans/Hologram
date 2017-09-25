@@ -1,9 +1,7 @@
 #include "User_Vector.h"
 
 void new_vector(std::vector<std::vector<double>>&user_vector_info)//constructs the vector
-{
-	std::vector<std::vector<double>>user_vector_info;
-	
+{	
 	std::vector<double> beta_constructor_one; //used for constructing the user_vector_info vector
 								  
 	user_vector_info.push_back(beta_constructor_one);//construct a container for the user vector
@@ -165,7 +163,7 @@ double calc_rho(double xprime, double yprime, double zprime) //returns the value
 {
 	double rho = 0;
 
-	std::sqrt((xprime*xprime) + (yprime*yprime) + (zprime*zprime));
+	rho = std::sqrt((xprime*xprime) + (yprime*yprime) + (zprime*zprime));
 
 	return rho;
 }

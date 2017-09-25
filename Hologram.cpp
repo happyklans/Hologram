@@ -13,8 +13,9 @@ take some input, convert from vector notation to cylindrical coordinates then ma
 #include "display.h"
 using namespace std;
 
+
 const int COLOR_ATTRIBUTES = 3; //number of color attributes
-const int MAX_SCALE = 9; //maximum length for any vector to be displayed
+const int MAX_SCALE = 7; //maximum length for any vector to be displayed
 const int DIMENSIONS = 3; // dimension space that the vectors occupy
 const int DIMENSION_VARIABLES = 120; // letter variables that describe spacial dimensions
 
@@ -66,13 +67,6 @@ int main()
 
 	//construct the matrix itself
 	construct(slices, zdimension, xdimension, ydimension);
-
-	for (int i = 0; i < DIMENSIONS; i++)
-	{
-		start.push_back(OFF);
-		end.push_back(OFF);
-	}
-
 	
 	//query user for total number of vectors they want to enter
 	cout << "Enter the number of vectors to be displayed: ";
@@ -91,7 +85,7 @@ int main()
 		{
 			cout << "Enter your starting " << static_cast<char>(DIMENSION_VARIABLES + i) << " point: ";
 			cin >> temp;
-			start[i] = temp;
+			start.push_back(temp);
 			cin.ignore(1);
 		}
 
@@ -99,7 +93,7 @@ int main()
 		{
 			cout << "Enter your ending " << static_cast<char>(DIMENSION_VARIABLES + i) << " point: ";
 			cin >> temp;
-			end[i] = temp;
+			end.push_back(temp);
 			cin.ignore(1);
 		}
 		//start and end point vectors populated
@@ -146,7 +140,7 @@ int main()
 	double_temp = user_vector_info[0][0]; // in this context, temp is the max value of all the rho values of the vectors
 
 								   //finding the max rho value
-	for (int i = 0; i < (user_vector_info.size() - 1); i++)
+	for (unsigned int i = 0; i < (user_vector_info.size() - 1); i++)
 	{
 
 		if (user_vector_info[i + 1][0] > temp)
@@ -167,89 +161,270 @@ int main()
 	{
 		n_index = calc_n(user_vector_info[vector_id][1]);
 
+		if (xprime > 0)
+		{
+			if (yprime >= 0)
+			{
+				n_index = n_index;
+			}
+			else if (yprime < 0)
+			{
+				n_index = 31 + n_index;
+			}
+		}
+		else if (xprime == 0 && yprime != 0)
+		{
+			if (yprime > 0)
+			{
+				n_index = 7;
+			}
+			else if (yprime < 0)
+			{
+				n_index = 23;
+			}
+		}
+		else if (xprime < 0)
+		{
+			n_index = 15 + n_index;
+		}
+
 		//slope of an abstract 2d vector that is identical to the 3d user inputted vector when the slice upon which the 
 		//user inputted vector sits is viewed head on
-		slope = round(y_calc(user_vector_info[vector_id][0], user_vector_info[vector_id][2]) / round(x_calc(user_vector_info[vector_id][0], user_vector_info[vector_id][2])));
+		
 		// in plain terms, slope = y/x, and in this case, y = rho*sin(phi), and x = rho*cos(phi)
-		//for 
-		if (slope >= 1)
-		{
+		slope = y_calc(user_vector_info[vector_id][0], user_vector_info[vector_id][2]) / x_calc(user_vector_info[vector_id][0], user_vector_info[vector_id][2]);
+		
 
-			//for integer slopes
-			if (modf(slope, &double_temp) == 0.0)
+		//Test for edge cases involving vectors lying on the axes
+		if (slope == 0 || isinf(slope) == true)
+		{
+			if (xprime > 0)
 			{
-				//in plain terms, i < magnitude of the x portion of the vector
-				//see above explaintion of mathmatical background for this claim
-				for (int i = 0; i < round(x_calc(user_vector_info[vector_id][0], (user_vector_info[vector_id][2]))); i++)
+				for (int i = 0; i < user_vector_info[vector_id][0]; i++)
 				{
-					for (int j = (slope*i); j < round(slope*(i + 1)); j++)
+					for (int k = 0; k < COLOR_ATTRIBUTES; k++)
 					{
-						for (int k = 0; k < COLOR_ATTRIBUTES; k++)
-						{
-							slices[n_index][i][j+6][k] = user_vector_info[vector_id][3 + k];
-						}
+						slices[n_index][i][7][k] = user_vector_info[vector_id][3 + k];
 					}
 				}
 			}
-			//for non-integer slopes greater than 1
-			else
+			if (yprime > 0)
 			{
-				for (int i = 0, j = 0; i < round(x_calc(user_vector_info[vector_id][0], (user_vector_info[vector_id][2]))); i++, j--)
+				for (int i = 0; i < user_vector_info[vector_id][0]; i++)
 				{
-					
-					while (j < (slope*(i + 1)))
+					for (int k = 0; k < COLOR_ATTRIBUTES; k++)
 					{
-						for (int k = 0; k < COLOR_ATTRIBUTES; k++)
-						{
-							slices[n_index][i][j+6][k] = user_vector_info[vector_id][3 + k];
-						}
-
-						j++;
+						slices[n_index][i][7][k] = user_vector_info[vector_id][3 + k];
 					}
-					
+				}
+			}
+			if (zprime > 0)
+			{
+				for (int i = 0; i < user_vector_info[vector_id][0]; i++)
+				{
+					for (int k = 0; k < COLOR_ATTRIBUTES; k++)
+					{
+						slices[n_index][0][i + 7][k] = user_vector_info[vector_id][3 + k];
+					}
 				}
 			}
 		}
-		else if (slope < 1)
+		else if (slope > 0)
 		{
-			//for slopes that can be expressed as 1/n where n is some integer greater than 1
-			if (modf((1 / slope), &double_temp) == 0.0)
+			if (abs(slope) >= 1)
 			{
-				//in plain terms, i < magnitude of the x portion of the vector
-				//see above explaintion of mathmatical background for this claim
-				for (int i = 0; i < round(y_calc(user_vector_info[vector_id][0], (user_vector_info[vector_id][2]))); i++)
+
+				//for integer slopes
+				if (modf(slope, &double_temp) == 0.0)
 				{
-					for (int j = ((1 / slope)*i); j < round((1 / slope)*(i + 1)); j++)
+					//in plain terms, i < magnitude of the x portion of the vector
+					//see above explaintion of mathmatical background for this claim
+					for (int i = 0; i < x_calc(user_vector_info[vector_id][0], (user_vector_info[vector_id][2])); i++)
 					{
-						for (int k = 0; k < COLOR_ATTRIBUTES; k++)
+						for (int j = (slope*i); j < round(slope*(i+1)); j++)
 						{
-							slices[n_index][j][i+6][k] = user_vector_info[vector_id][3 + k];
+							for (int k = 0; k < COLOR_ATTRIBUTES; k++)
+							{
+								slices[n_index][i][(-1*j) + 7][k] = user_vector_info[vector_id][3 + k];
+							}
 						}
 					}
 				}
-			}
-			//for all non-integer slopes less than 1
-			else
-			{
-				for (int i = 0, j = 0; i < (y_calc(user_vector_info[vector_id][0], (user_vector_info[vector_id][2]))); i++, j--) //due to the way that rho and phi (the variables 
-				{																									//being used) are calculated, the product of this 
-					while (j < ((1 / slope)*(i + 1)))																		//operation will always yield an integer
-					{																								// removing the need to round it
-						for (int k = 0; k < COLOR_ATTRIBUTES; k++)
+				//for non-integer slopes greater than 1
+				else
+				{
+					for (int i = 0, j = 0; i < x_calc(user_vector_info[vector_id][0], (user_vector_info[vector_id][2])); i++, j--)
+					{
+
+						while (j < (slope*(i + 1)))
 						{
-							slices[n_index][j][i+6][k] = user_vector_info[vector_id][3 + k];
+							for (int k = 0; k < COLOR_ATTRIBUTES; k++)
+							{
+								slices[n_index][i][(-1*j) + 7][k] = user_vector_info[vector_id][3 + k];
+							}
+
+							j++;
 						}
 
-						j++;
 					}
+				}
+			}
+			else if (abs(slope) < 1)
+			{
 
-					//increment y 
-					
+				//for slopes that can be expressed as 1/n where n is some integer greater than 1
+				if (modf((1 / slope), &double_temp) == 0.0)
+				{
+					//in plain terms, i < magnitude of the x portion of the vector
+					//see above explaintion of mathmatical background for this claim
+					for (int i = 0; i < y_calc(user_vector_info[vector_id][0], (user_vector_info[vector_id][2])); i++)
+					{
+						for (int j = ((1 / slope)*i); j < round((1 / slope)*(i + 1)); j++)
+						{
+							for (int k = 0; k < COLOR_ATTRIBUTES; k++)
+							{
+								slices[n_index][j][i + 7][k] = user_vector_info[vector_id][3 + k];
+							}
+						}
+					}
+				}
+				//for all non-integer slopes less than 1
+				else
+				{
+					for (int i = 0, j = 0; i < y_calc(user_vector_info[vector_id][0], (user_vector_info[vector_id][2])); i++, j--) //due to the way that rho and phi (the variables 
+					{																									//being used) are calculated, the product of this 
+						while (j < ((1 / slope)*(i + 1)))																		//operation will always yield an integer
+						{																								// removing the need to round it
+							for (int k = 0; k < COLOR_ATTRIBUTES; k++)
+							{
+								slices[n_index][j][i + 7][k] = user_vector_info[vector_id][3 + k];
+							}
 
+							j++;
+						}
+
+						//increment y 
+
+
+					}
 				}
 			}
 		}
+		else
+		{
+			if (abs(slope) >= 1)
+			{
 
+				//for integer slopes
+				if (modf(slope, &double_temp) == 0.0)
+				{
+					//in plain terms, i < magnitude of the x portion of the vector
+					//see above explaintion of mathmatical background for this claim
+					for (int i = 0; i < x_calc(user_vector_info[vector_id][0], (user_vector_info[vector_id][2])); i++)
+					{
+						for (int j = (slope*i); j < round(slope*(i + 1)); j++)
+						{
+							for (int k = 0; k < COLOR_ATTRIBUTES; k++)
+							{
+								slices[n_index][i][j + 7][k] = user_vector_info[vector_id][3 + k];
+							}
+						}
+					}
+				}
+				//for non-integer slopes greater than 1
+				else
+				{
+					for (int i = 0, j = 0; i < x_calc(user_vector_info[vector_id][0], (user_vector_info[vector_id][2])); i++, j--)
+					{
+
+						while (j < (slope*(i + 1)))
+						{
+							for (int k = 0; k < COLOR_ATTRIBUTES; k++)
+							{
+								slices[n_index][i][j + 7][k] = user_vector_info[vector_id][3 + k];
+							}
+
+							j++;
+						}
+
+					}
+				}
+			}
+			else if (abs(slope) < 1)
+			{
+				if (slope = 0)
+				{
+					if (xprime > 0)
+					{
+						for (int i = 0; i < user_vector_info[vector_id][0]; i++)
+						{
+							for (int k = 0; k < COLOR_ATTRIBUTES; k++)
+							{
+								slices[0][i][7][k] = user_vector_info[vector_id][3 + k];
+							}
+						}
+					}
+					if (yprime > 0)
+					{
+						for (int i = 0; i < user_vector_info[vector_id][0]; i++)
+						{
+							for (int k = 0; k < COLOR_ATTRIBUTES; k++)
+							{
+								slices[7][i][7][k] = user_vector_info[vector_id][3 + k];
+							}
+						}
+					}
+					if (zprime > 0)
+					{
+						for (int i = 0; i < user_vector_info[vector_id][0]; i++)
+						{
+							for (int k = 0; k < COLOR_ATTRIBUTES; k++)
+							{
+								slices[0][0][i + 7][k] = user_vector_info[vector_id][3 + k];
+							}
+						}
+					}
+				}
+
+
+				//for slopes that can be expressed as 1/n where n is some integer greater than 1
+				if (modf((1 / slope), &double_temp) == 0.0)
+				{
+					//in plain terms, i < magnitude of the x portion of the vector
+					//see above explaintion of mathmatical background for this claim
+					for (int i = 0; i < y_calc(user_vector_info[vector_id][0], (user_vector_info[vector_id][2])); i++)
+					{
+						for (int j = ((1 / slope)*i); j < round((1 / slope)*(i + 1)); j++)
+						{
+							for (int k = 0; k < COLOR_ATTRIBUTES; k++)
+							{
+								slices[n_index][j][i + 7][k] = user_vector_info[vector_id][3 + k];
+							}
+						}
+					}
+				}
+				//for all non-integer slopes less than 1
+				else
+				{
+					for (int i = 0, j = 0; i < y_calc(user_vector_info[vector_id][0], (user_vector_info[vector_id][2])); i++, j--) //due to the way that rho and phi (the variables 
+					{																									//being used) are calculated, the product of this 
+						while (j < ((1 / slope)*(i + 1)))																		//operation will always yield an integer
+						{																								// removing the need to round it
+							for (int k = 0; k < COLOR_ATTRIBUTES; k++)
+							{
+								slices[n_index][j][i + 7][k] = user_vector_info[vector_id][3 + k];
+							}
+
+							j++;
+						}
+
+						//increment y 
+
+
+					}
+				}
+			}
+		}
 	}
 	//DELETE THIS IS JUST TO TEST NOT ACTUAL CODE GET OFF MY CASE
 
