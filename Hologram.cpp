@@ -10,6 +10,7 @@ take some input, convert from vector notation to cylindrical coordinates then ma
 #include <fstream>
 #include <cmath>
 #include "User_Vector.h"
+#include "display.h"
 using namespace std;
 
 const int ON = 255; //defines the states of the hardware 
@@ -25,12 +26,6 @@ int main()
 {
 	// variables
 	vector< vector< vector< vector< int > > > > slices; // abstratction of the FPGA display bitmap
-	
-	vector< vector< vector< int > > > constructor_one; //used for constructing the matrix
-	
-	vector< vector< int > >  constructor_two; //				"
-	
-	vector< int > constructor_three; //							"
 	
 	vector<int> start; // start point of a vector
 	
@@ -74,25 +69,7 @@ int main()
 	cin >> ydimension;
 
 	//construct the matrix itself
-	for (int n = 0; n < zdimension; n++)
-	{
-		slices.push_back(constructor_one);
-
-		for (int row = 0; row < xdimension; row++)
-		{
-			slices[n].push_back(constructor_two);
-
-			for (int col = 0; col < ydimension; col++)
-			{
-				slices[n][row].push_back(constructor_three);
-
-				for (int i = 0; i < ATTRIBUTES; i++)
-				{
-					slices[n][row][col].push_back(OFF);
-				}
-			}
-		}
-	}
+	construct(slices, zdimension, xdimension, ydimension, ATTRIBUTES, OFF);
 
 	for (int i = 0; i < DIMENSIONS; i++)
 	{
@@ -192,13 +169,11 @@ int main()
 	//draw the user entered vector on the appropriate slice
 	for (int vector_id = 0; vector_id < user_vector_info.size(); vector_id++)
 	{
-		n_index = user_vector_info[vector_id][1] / SLICE_WIDTH;
-		n_index = round(n_index);
-		n_index = static_cast<int>(n_index);
+		n_index = calc_n(user_vector_info[vector_id][1], SLICE_WIDTH);
 
 		//slope of an abstract 2d vector that is identical to the 3d user inputted vector when the slice upon which the 
 		//user inputted vector sits is viewed head on
-		slope = round(user_vector_info[vector_id][0] * cos(user_vector_info[vector_id][2])) / round(user_vector_info[vector_id][0] * sin(user_vector_info[vector_id][2]));
+		slope = round(y_calc(user_vector_info[vector_id][0], user_vector_info[vector_id][2]) / round(x_calc(user_vector_info[vector_id][0], user_vector_info[vector_id][2])));
 		// in plain terms, slope = y/x, and in this case, y = rho*sin(phi), and x = rho*cos(phi)
 		//for 
 		if (slope >= 1)
@@ -209,7 +184,7 @@ int main()
 			{
 				//in plain terms, i < magnitude of the x portion of the vector
 				//see above explaintion of mathmatical background for this claim
-				for (int i = 0; i < round(user_vector_info[vector_id][0] * sin(user_vector_info[vector_id][2])); i++)
+				for (int i = 0; i < round(x_calc(user_vector_info[vector_id][0], (user_vector_info[vector_id][2]))); i++)
 				{
 					for (int j = (slope*i); j < round(slope*(i + 1)); j++)
 					{
@@ -223,7 +198,7 @@ int main()
 			//for non-integer slopes greater than 1
 			else
 			{
-				for (int i = 0, j = 0; i < round(user_vector_info[vector_id][0] * sin(user_vector_info[vector_id][2])); i++, j--)
+				for (int i = 0, j = 0; i < round(x_calc(user_vector_info[vector_id][0], (user_vector_info[vector_id][2]))); i++, j--)
 				{
 					
 					while (j < (slope*(i + 1)))
@@ -246,7 +221,7 @@ int main()
 			{
 				//in plain terms, i < magnitude of the x portion of the vector
 				//see above explaintion of mathmatical background for this claim
-				for (int i = 0; i < round(user_vector_info[vector_id][0] * cos(user_vector_info[vector_id][2])); i++)
+				for (int i = 0; i < round(y_calc(user_vector_info[vector_id][0], (user_vector_info[vector_id][2]))); i++)
 				{
 					for (int j = ((1 / slope)*i); j < round((1 / slope)*(i + 1)); j++)
 					{
@@ -260,7 +235,7 @@ int main()
 			//for all non-integer slopes less than 1
 			else
 			{
-				for (int i = 0, j = 0; i < (user_vector_info[vector_id][0] * cos(user_vector_info[vector_id][2])); i++, j--) //due to the way that rho and phi (the variables 
+				for (int i = 0, j = 0; i < (y_calc(user_vector_info[vector_id][0], (user_vector_info[vector_id][2]))); i++, j--) //due to the way that rho and phi (the variables 
 				{																									//being used) are calculated, the product of this 
 					while (j < ((1 / slope)*(i + 1)))																		//operation will always yield an integer
 					{																								// removing the need to round it
