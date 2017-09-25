@@ -13,14 +13,10 @@ take some input, convert from vector notation to cylindrical coordinates then ma
 #include "display.h"
 using namespace std;
 
-const int ON = 255; //defines the states of the hardware 
-const int OFF = 0; //			"
-const int ATTRIBUTES = 6; // number of attributes for every cell in the abstraction space (status, red, green, blue)
 const int COLOR_ATTRIBUTES = 3; //number of color attributes
 const int MAX_SCALE = 9; //maximum length for any vector to be displayed
 const int DIMENSIONS = 3; // dimension space that the vectors occupy
 const int DIMENSION_VARIABLES = 120; // letter variables that describe spacial dimensions
-const double SLICE_WIDTH = .1963495408; // the slice width in radians
 
 int main()
 {
@@ -69,7 +65,7 @@ int main()
 	cin >> ydimension;
 
 	//construct the matrix itself
-	construct(slices, zdimension, xdimension, ydimension, ATTRIBUTES, OFF);
+	construct(slices, zdimension, xdimension, ydimension);
 
 	for (int i = 0; i < DIMENSIONS; i++)
 	{
@@ -169,7 +165,7 @@ int main()
 	//draw the user entered vector on the appropriate slice
 	for (int vector_id = 0; vector_id < user_vector_info.size(); vector_id++)
 	{
-		n_index = calc_n(user_vector_info[vector_id][1], SLICE_WIDTH);
+		n_index = calc_n(user_vector_info[vector_id][1]);
 
 		//slope of an abstract 2d vector that is identical to the 3d user inputted vector when the slice upon which the 
 		//user inputted vector sits is viewed head on

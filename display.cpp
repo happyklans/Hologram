@@ -1,6 +1,6 @@
 #include "display.h"
 
-void construct(std::vector<std::vector<std::vector<std::vector<int> > > > &display_vector, int z, int x, int y, int ATTRIBUTES, int OFF) //constructs vector array
+void construct(std::vector<std::vector<std::vector<std::vector<int> > > > &display_vector, int z, int x, int y) //constructs vector array
 {
 	std::vector< std::vector< std::vector< int > > > constructor_one; //used for constructing the matrix
 
@@ -31,7 +31,7 @@ void construct(std::vector<std::vector<std::vector<std::vector<int> > > > &displ
 	return;
 }
 
-int calc_n(double theta, double SLICE_WIDTH) //returns slice number from 0-31
+int calc_n(double theta) //returns slice number from 0-31
 {
 	int n_index = 0; 
 	n_index = theta / SLICE_WIDTH; 
