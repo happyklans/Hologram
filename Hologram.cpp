@@ -209,7 +209,7 @@ int main()
 				{
 					for (int k = 0; k < COLOR_ATTRIBUTES; k++)
 					{
-						slices[n_index][i][7][k] = user_vector_info[vector_id][3 + k];
+						slices[n_index][i][7][k] = user_vector_info[vector_id][6 + k];
 					}
 				}
 			}
@@ -219,7 +219,7 @@ int main()
 				{
 					for (int k = 0; k < COLOR_ATTRIBUTES; k++)
 					{
-						slices[n_index][i][7][k] = user_vector_info[vector_id][3 + k];
+						slices[n_index][i][7][k] = user_vector_info[vector_id][6 + k];
 					}
 				}
 			}
@@ -232,7 +232,7 @@ int main()
 					{
 						for (int k = 0; k < COLOR_ATTRIBUTES; k++)
 						{
-							slices[n_index][0][i + 7][k] = user_vector_info[vector_id][3 + k];
+							slices[n_index][0][i + 7][k] = user_vector_info[vector_id][6 + k];
 						}
 					}
 				}
@@ -242,7 +242,7 @@ int main()
 					{
 						for (int k = 0; k < COLOR_ATTRIBUTES; k++)
 						{
-							slices[n_index][0][(-1*i) + 7][k] = user_vector_info[vector_id][3 + k];
+							slices[n_index][0][(-1*i) + 7][k] = user_vector_info[vector_id][6 + k];
 						}
 					}
 				}
@@ -265,7 +265,7 @@ int main()
 						{
 							for (int k = 0; k < COLOR_ATTRIBUTES; k++)
 							{
-								slices[n_index][i][(-1*j) + 7][k] = user_vector_info[vector_id][3 + k];
+								slices[n_index][i][(-1*j) + 7][k] = user_vector_info[vector_id][6 + k];
 							}
 						}
 					}
@@ -280,7 +280,7 @@ int main()
 						{
 							for (int k = 0; k < COLOR_ATTRIBUTES; k++)
 							{
-								slices[n_index][i][(-1*j) + 7][k] = user_vector_info[vector_id][3 + k];
+								slices[n_index][i][(-1*j) + 7][k] = user_vector_info[vector_id][6 + k];
 							}
 
 							j++;
@@ -303,7 +303,7 @@ int main()
 						{
 							for (int k = 0; k < COLOR_ATTRIBUTES; k++)
 							{
-								slices[n_index][j][i + 7][k] = user_vector_info[vector_id][3 + k];
+								slices[n_index][j][i + 7][k] = user_vector_info[vector_id][6 + k];
 							}
 						}
 					}
@@ -317,7 +317,7 @@ int main()
 						{																								// removing the need to round it
 							for (int k = 0; k < COLOR_ATTRIBUTES; k++)
 							{
-								slices[n_index][j][i + 7][k] = user_vector_info[vector_id][3 + k];
+								slices[n_index][j][i + 7][k] = user_vector_info[vector_id][6 + k];
 							}
 
 							j++;
@@ -347,7 +347,7 @@ int main()
 						{
 							for (int k = 0; k < COLOR_ATTRIBUTES; k++)
 							{
-								slices[n_index][i][j + 7][k] = user_vector_info[vector_id][3 + k];
+								slices[n_index][i][j + 7][k] = user_vector_info[vector_id][6 + k];
 							}
 						}
 					}
@@ -362,7 +362,7 @@ int main()
 						{
 							for (int k = 0; k < COLOR_ATTRIBUTES; k++)
 							{
-								slices[n_index][i][j + 7][k] = user_vector_info[vector_id][3 + k];
+								slices[n_index][i][j + 7][k] = user_vector_info[vector_id][6 + k];
 							}
 
 							j++;
@@ -385,7 +385,7 @@ int main()
 						{
 							for (int k = 0; k < COLOR_ATTRIBUTES; k++)
 							{
-								slices[n_index][j][i + 7][k] = user_vector_info[vector_id][3 + k];
+								slices[n_index][j][i + 7][k] = user_vector_info[vector_id][6 + k];
 							}
 						}
 					}
@@ -399,7 +399,7 @@ int main()
 						{																								// removing the need to round it
 							for (int k = 0; k < COLOR_ATTRIBUTES; k++)
 							{
-								slices[n_index][j][i + 7][k] = user_vector_info[vector_id][3 + k];
+								slices[n_index][j][i + 7][k] = user_vector_info[vector_id][6 + k];
 							}
 
 							j++;
