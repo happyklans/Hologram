@@ -18,6 +18,10 @@ const int COLOR_ATTRIBUTES = 3; //number of color attributes
 const int MAX_SCALE = 7; //maximum length for any vector to be displayed
 const int DIMENSIONS = 3; // dimension space that the vectors occupy
 const int DIMENSION_VARIABLES = 120; // letter variables that describe spacial dimensions
+const int X_DIMENSION = 8; // the dimensions of the FPGA display bitmap
+const int Y_DIMENSION = 15; //				"
+const int Z_DIMENSION = 31; //				"
+
 
 int main()
 {
@@ -38,12 +42,6 @@ int main()
 	
 	double zprime = 0; //					"
 	
-	int xdimension = 0; // the dimensions of the FPGA display bitmap
-	
-	int ydimension = 0; //				"
-	
-	int zdimension = 0; //				"
-	
 	double slope = 0; // slope of the vector line in the 2d layer of the bitmap
 	
 	int num_vectors; // number of active vectors
@@ -57,16 +55,10 @@ int main()
 	int color = 0; // used to get the color preference for the input vector
 	
 					 
-	// create slices vector as a multidimensional array of user entered dimensions
-	cout << "Enter the dimensions of your abstract space (z -> Enter -> x -> Enter -> y -> Enter): ";
-	cin >> zdimension;
-	cin.ignore(1);
-	cin >> xdimension;
-	cin.ignore(1);
-	cin >> ydimension;
+	
 
 	//construct the matrix itself
-	construct(slices, zdimension, xdimension, ydimension);
+	construct(slices, Z_DIMENSION, X_DIMENSION, Y_DIMENSION);
 	
 	//query user for total number of vectors they want to enter
 	cout << "Enter the number of vectors to be displayed: ";
@@ -229,6 +221,7 @@ int main()
 				}
 			}
 		}
+		//for positive slopes
 		else if (slope > 0)
 		{
 			if (abs(slope) >= 1)
@@ -310,6 +303,7 @@ int main()
 				}
 			}
 		}
+		//for negative slopes
 		else
 		{
 			if (abs(slope) >= 1)
@@ -320,7 +314,7 @@ int main()
 				{
 					//in plain terms, i < magnitude of the x portion of the vector
 					//see above explaintion of mathmatical background for this claim
-					for (int i = 0; i < x_calc(user_vector_info[vector_id][0], (user_vector_info[vector_id][2])); i++)
+					for (int i = 0; i < abs(x_calc(user_vector_info[vector_id][0], (user_vector_info[vector_id][2]))); i++)
 					{
 						for (int j = (slope*i); j < round(slope*(i + 1)); j++)
 						{
@@ -334,7 +328,7 @@ int main()
 				//for non-integer slopes greater than 1
 				else
 				{
-					for (int i = 0, j = 0; i < x_calc(user_vector_info[vector_id][0], (user_vector_info[vector_id][2])); i++, j--)
+					for (int i = 0, j = 0; i < abs(x_calc(user_vector_info[vector_id][0], (user_vector_info[vector_id][2]))); i++, j--)
 					{
 
 						while (j < (slope*(i + 1)))
@@ -352,47 +346,13 @@ int main()
 			}
 			else if (abs(slope) < 1)
 			{
-				if (slope = 0)
-				{
-					if (xprime > 0)
-					{
-						for (int i = 0; i < user_vector_info[vector_id][0]; i++)
-						{
-							for (int k = 0; k < COLOR_ATTRIBUTES; k++)
-							{
-								slices[0][i][7][k] = user_vector_info[vector_id][3 + k];
-							}
-						}
-					}
-					if (yprime > 0)
-					{
-						for (int i = 0; i < user_vector_info[vector_id][0]; i++)
-						{
-							for (int k = 0; k < COLOR_ATTRIBUTES; k++)
-							{
-								slices[7][i][7][k] = user_vector_info[vector_id][3 + k];
-							}
-						}
-					}
-					if (zprime > 0)
-					{
-						for (int i = 0; i < user_vector_info[vector_id][0]; i++)
-						{
-							for (int k = 0; k < COLOR_ATTRIBUTES; k++)
-							{
-								slices[0][0][i + 7][k] = user_vector_info[vector_id][3 + k];
-							}
-						}
-					}
-				}
-
-
+				
 				//for slopes that can be expressed as 1/n where n is some integer greater than 1
 				if (modf((1 / slope), &double_temp) == 0.0)
 				{
 					//in plain terms, i < magnitude of the x portion of the vector
 					//see above explaintion of mathmatical background for this claim
-					for (int i = 0; i < y_calc(user_vector_info[vector_id][0], (user_vector_info[vector_id][2])); i++)
+					for (int i = 0; i < abs(y_calc(user_vector_info[vector_id][0], (user_vector_info[vector_id][2]))); i++)
 					{
 						for (int j = ((1 / slope)*i); j < round((1 / slope)*(i + 1)); j++)
 						{
@@ -406,7 +366,7 @@ int main()
 				//for all non-integer slopes less than 1
 				else
 				{
-					for (int i = 0, j = 0; i < y_calc(user_vector_info[vector_id][0], (user_vector_info[vector_id][2])); i++, j--) //due to the way that rho and phi (the variables 
+					for (int i = 0, j = 0; i < abs(y_calc(user_vector_info[vector_id][0], (user_vector_info[vector_id][2]))); i++, j--) //due to the way that rho and phi (the variables 
 					{																									//being used) are calculated, the product of this 
 						while (j < ((1 / slope)*(i + 1)))																		//operation will always yield an integer
 						{																								// removing the need to round it
@@ -430,15 +390,15 @@ int main()
 
 	bitmap.open("bitmap.txt", ios::in);
 
-	for (int n = 0; n < zdimension; n++)
+	for (int n = 0; n < Z_DIMENSION; n++)
 	{
 		
 
-		for (int col = 0; col < ydimension; col++)
+		for (int col = 0; col < Y_DIMENSION; col++)
 		{
 			
 
-			for (int row = 0; row < xdimension; row++)
+			for (int row = 0; row < X_DIMENSION; row++)
 			{
 				
 				for (int i = 0; i < 1; i++)
@@ -448,10 +408,10 @@ int main()
 
 				
 			}
-			bitmap << endl;
+			bitmap << endl << endl << endl;
 		}
 
-		bitmap << endl;
+		bitmap << "----------------------------------------------" << endl << endl << endl;
 	}
 	bitmap.close();
 	
