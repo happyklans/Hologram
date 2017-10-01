@@ -15,7 +15,7 @@ using namespace std;
 
 
 const int COLOR_ATTRIBUTES = 3; //number of color attributes
-const int MAX_SCALE = 7; //maximum length for any vector to be displayed
+const int MAX_SCALE = 8; //maximum length for any vector to be displayed
 const int DIMENSIONS = 3; // dimension space that the vectors occupy
 const int DIMENSION_VARIABLES = 120; // letter variables that describe spacial dimensions
 const int X_DIMENSION = 8; // the dimensions of the FPGA display bitmap
@@ -104,20 +104,33 @@ int main()
 		
 
 		//defining the vector in rectangular coordinates
-		xprime = end[0] - start[0];
+		xprime = end[0 + (3*i)] - start[0 + (3 * i)];
 		
-		yprime = end[1] - start[1];
+		yprime = end[1 + (3 * i)] - start[1 + (3 * i)];
 		
-		zprime = end[2] - start[2];
+		zprime = end[2 + (3 * i)] - start[2 + (3 * i)];
 
 
 		//add attributes to the vector index
 		//spherical coordinates for the user entered vector
 		user_vector_info[i].push_back(calc_rho(xprime, yprime, zprime));
 		
-		user_vector_info[i].push_back(calc_theta(yprime, xprime));
-		
+		if (xprime != 0 && yprime != 0) //testing for viability of the precondition
+		{
+			user_vector_info[i].push_back(calc_theta(yprime, xprime));
+		}
+		else										//in this case, the vector is truly vertical, and has no x or y component, and as a result, 
+			user_vector_info[i].push_back(0);		//the choice of frame is arbitrary. The developers have chose to default to the first frame.
+
 		user_vector_info[i].push_back(calc_phi(zprime, calc_rho(xprime, yprime, zprime)));
+		
+		//dimensions of the rectangular vector
+		
+		user_vector_info[i].push_back(xprime);
+
+		user_vector_info[i].push_back(yprime);
+
+		user_vector_info[i].push_back(zprime);
 
 		//12 bit color variables
 		
@@ -153,29 +166,29 @@ int main()
 	{
 		n_index = calc_n(user_vector_info[vector_id][1]);
 
-		if (xprime > 0)
+		if (user_vector_info[vector_id][3] > 0)
 		{
-			if (yprime >= 0)
+			if (user_vector_info[vector_id][4] >= 0)
 			{
 				n_index = n_index;
 			}
-			else if (yprime < 0)
+			else if (user_vector_info[vector_id][4] < 0)
 			{
 				n_index = 31 + n_index;
 			}
 		}
-		else if (xprime == 0 && yprime != 0)
+		else if (user_vector_info[vector_id][3] == 0 && user_vector_info[vector_id][4] != 0)
 		{
-			if (yprime > 0)
+			if (user_vector_info[vector_id][4] > 0)
 			{
 				n_index = 7;
 			}
-			else if (yprime < 0)
+			else if (user_vector_info[vector_id][4] < 0)
 			{
 				n_index = 23;
 			}
 		}
-		else if (xprime < 0)
+		else if (user_vector_info[vector_id][3] < 0)
 		{
 			n_index = 15 + n_index;
 		}
@@ -190,7 +203,7 @@ int main()
 		//Test for edge cases involving vectors lying on the axes
 		if (slope == 0 || isinf(slope) == true)
 		{
-			if (xprime > 0)
+			if (abs(user_vector_info[vector_id][3]) > 0)
 			{
 				for (int i = 0; i < user_vector_info[vector_id][0]; i++)
 				{
@@ -200,7 +213,7 @@ int main()
 					}
 				}
 			}
-			if (yprime > 0)
+			if (abs(user_vector_info[vector_id][4]) > 0)
 			{
 				for (int i = 0; i < user_vector_info[vector_id][0]; i++)
 				{
@@ -210,13 +223,27 @@ int main()
 					}
 				}
 			}
-			if (zprime > 0)
+			if (abs(user_vector_info[vector_id][5]) > 0)
 			{
-				for (int i = 0; i < user_vector_info[vector_id][0]; i++)
+				
+				if (user_vector_info[vector_id][5] < 0)
 				{
-					for (int k = 0; k < COLOR_ATTRIBUTES; k++)
+					for (int i = 0; i < user_vector_info[vector_id][0]; i++)
 					{
-						slices[n_index][0][i + 7][k] = user_vector_info[vector_id][3 + k];
+						for (int k = 0; k < COLOR_ATTRIBUTES; k++)
+						{
+							slices[n_index][0][i + 7][k] = user_vector_info[vector_id][3 + k];
+						}
+					}
+				}
+				else
+				{
+					for (int i = 0; i < user_vector_info[vector_id][0]; i++)
+					{
+						for (int k = 0; k < COLOR_ATTRIBUTES; k++)
+						{
+							slices[n_index][0][(-1*i) + 7][k] = user_vector_info[vector_id][3 + k];
+						}
 					}
 				}
 			}
@@ -316,7 +343,7 @@ int main()
 					//see above explaintion of mathmatical background for this claim
 					for (int i = 0; i < abs(x_calc(user_vector_info[vector_id][0], (user_vector_info[vector_id][2]))); i++)
 					{
-						for (int j = (slope*i); j < round(slope*(i + 1)); j++)
+						for (int j = abs((slope*i)); j < abs(round(slope*(i + 1))); j++)
 						{
 							for (int k = 0; k < COLOR_ATTRIBUTES; k++)
 							{
@@ -331,7 +358,7 @@ int main()
 					for (int i = 0, j = 0; i < abs(x_calc(user_vector_info[vector_id][0], (user_vector_info[vector_id][2]))); i++, j--)
 					{
 
-						while (j < (slope*(i + 1)))
+						while (j < abs((slope*(i + 1))))
 						{
 							for (int k = 0; k < COLOR_ATTRIBUTES; k++)
 							{
@@ -354,7 +381,7 @@ int main()
 					//see above explaintion of mathmatical background for this claim
 					for (int i = 0; i < abs(y_calc(user_vector_info[vector_id][0], (user_vector_info[vector_id][2]))); i++)
 					{
-						for (int j = ((1 / slope)*i); j < round((1 / slope)*(i + 1)); j++)
+						for (int j = abs(((1 / slope)*i)); j < abs(round((1 / slope)*(i + 1))); j++)
 						{
 							for (int k = 0; k < COLOR_ATTRIBUTES; k++)
 							{
@@ -368,7 +395,7 @@ int main()
 				{
 					for (int i = 0, j = 0; i < abs(y_calc(user_vector_info[vector_id][0], (user_vector_info[vector_id][2]))); i++, j--) //due to the way that rho and phi (the variables 
 					{																									//being used) are calculated, the product of this 
-						while (j < ((1 / slope)*(i + 1)))																		//operation will always yield an integer
+						while (j < abs((1 / slope)*(i + 1)))																		//operation will always yield an integer
 						{																								// removing the need to round it
 							for (int k = 0; k < COLOR_ATTRIBUTES; k++)
 							{

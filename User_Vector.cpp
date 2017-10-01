@@ -168,6 +168,7 @@ double calc_rho(double xprime, double yprime, double zprime) //returns the value
 	return rho;
 }
 
+//Pre-condition: xprime cannot = 0 and yprime = 0
 double calc_theta(double yprime, double xprime) //returns the value of the spherical component theta of the rectangular user vector
 {
 	double theta = 0;
