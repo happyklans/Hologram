@@ -155,7 +155,7 @@ int main()
 	//scale all values to proper relative size to fit the display device (max length of 7)
 	for (int i = 0; i < user_vector_info.size(); i++)
 	{
-		user_vector_info[i][0] = round((MAX_SCALE - ((double_temp - user_vector_info[i][0]) / user_vector_info[i][0])*MAX_SCALE));
+		user_vector_info[i][0] = round((user_vector_info[i][0]/double_temp)*MAX_SCALE);
 	}
 
 	
